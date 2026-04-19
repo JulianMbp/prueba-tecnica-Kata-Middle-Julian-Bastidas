@@ -46,7 +46,14 @@ services:
     networks:
       - release-network
 
-  # frontend: añadir Dockerfile + nginx cuando exista el build de Angular (puerto 4200→80)
+  frontend:
+    build: ./apps/frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - release-network
 
 networks:
   release-network:
