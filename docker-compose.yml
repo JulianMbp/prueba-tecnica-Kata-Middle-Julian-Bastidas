@@ -1,0 +1,53 @@
+services:
+  api-gateway:
+    build: ./apps/api-gateway
+    ports:
+      - "3000:3000"
+    env_file: .env
+    networks:
+      - release-network
+    depends_on:
+      - release-service
+      - rules-service
+      - integration-service
+      - notification-service
+
+  release-service:
+    build: ./apps/release-service
+    ports:
+      - "3001:3001"
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+    networks:
+      - release-network
+
+  rules-service:
+    build: ./apps/rules-service
+    ports:
+      - "3002:3002"
+    env_file: .env
+    networks:
+      - release-network
+
+  integration-service:
+    build: ./apps/integration-service
+    ports:
+      - "3003:3003"
+    env_file: .env
+    networks:
+      - release-network
+
+  notification-service:
+    build: ./apps/notification-service
+    ports:
+      - "3004:3004"
+    env_file: .env
+    networks:
+      - release-network
+
+  # frontend: añadir Dockerfile + nginx cuando exista el build de Angular (puerto 4200→80)
+
+networks:
+  release-network:
+    driver: bridge
