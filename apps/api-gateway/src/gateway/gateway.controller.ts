@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Req,
@@ -111,6 +112,33 @@ export class GatewayController {
     const { status, data } = await this.gateway.proxy({
       method: 'GET',
       path: `/releases/${id}`,
+      authorization: req.headers.authorization,
+    });
+    res.status(status).json(data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('coverage/:owner/:repo/:prNumber')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Cobertura desde GitHub Checks',
+    description:
+      'Proxy a `GET /integrations/coverage/:owner/:repo/:prNumber` del integration-service.',
+  })
+  @ApiParam({ name: 'owner', description: 'Propietario del repositorio' })
+  @ApiParam({ name: 'repo', description: 'Nombre del repositorio' })
+  @ApiParam({ name: 'prNumber', description: 'Número del PR' })
+  async getCoverage(
+    @Param('owner') owner: string,
+    @Param('repo') repo: string,
+    @Param('prNumber', ParseIntPipe) prNumber: number,
+    @Req() req: Request,
+    @Res({ passthrough: false }) res: Response,
+  ) {
+    const path = `/integrations/coverage/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${prNumber}`;
+    const { status, data } = await this.gateway.proxyIntegration({
+      method: 'GET',
+      path,
       authorization: req.headers.authorization,
     });
     res.status(status).json(data);
