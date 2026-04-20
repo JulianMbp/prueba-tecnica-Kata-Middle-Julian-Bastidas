@@ -7,7 +7,7 @@ export class RulesController {
   constructor(private readonly rulesService: RulesService) {}
 
   @Post('evaluate')
-  evaluate(@Body() dto: EvaluateRulesDto) {
+  async evaluate(@Body() dto: EvaluateRulesDto) {
     return this.rulesService.evaluate(dto);
   }
 }
