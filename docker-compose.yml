@@ -4,6 +4,10 @@ services:
     ports:
       - "3000:3000"
     env_file: .env
+    environment:
+      # En red Docker, localhost no es otro contenedor: usar nombres de servicio
+      RELEASE_SERVICE_URL: http://release-service:3001
+      INTEGRATION_SERVICE_URL: http://integration-service:3003
     networks:
       - release-network
     depends_on:
@@ -17,6 +21,10 @@ services:
     ports:
       - "3001:3001"
     env_file: .env
+    environment:
+      RULES_SERVICE_URL: http://rules-service:3002
+      NOTIFICATION_SERVICE_URL: http://notification-service:3004
+      DB_PATH: /app/data/releases.db
     volumes:
       - ./data:/app/data
     networks:
@@ -27,6 +35,10 @@ services:
     ports:
       - "3002:3002"
     env_file: .env
+    environment:
+      INTEGRATION_SERVICE_URL: http://integration-service:3003
+    depends_on:
+      - integration-service
     networks:
       - release-network
 
