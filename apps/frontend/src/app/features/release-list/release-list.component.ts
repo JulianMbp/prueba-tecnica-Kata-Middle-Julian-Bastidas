@@ -9,23 +9,23 @@ import { ReleaseService } from '../../shared/services/release.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-      <h1 class="text-2xl font-semibold text-slate-900">Releases</h1>
-      <a
-        routerLink="/releases/new"
-        class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-      >
-        Nueva Solicitud
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h1 class="page-title">Releases</h1>
+        <p class="page-subtitle">Solicitudes y estado de cobertura.</p>
+      </div>
+      <a routerLink="/releases/new" class="btn-primary shrink-0">
+        Nueva solicitud
       </a>
     </div>
 
     @if (loading) {
       <div
-        class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+        class="table-shell overflow-hidden"
         role="status"
         aria-label="Cargando releases"
       >
-        <div class="border-b border-slate-100 bg-slate-50 px-4 py-3">
+        <div class="border-b border-slate-100/90 bg-slate-50/90 px-4 py-3">
           <div class="h-4 w-40 animate-pulse rounded bg-slate-200"></div>
         </div>
         <div class="divide-y divide-slate-100 p-4">
@@ -55,14 +55,14 @@ import { ReleaseService } from '../../shared/services/release.service';
       </div>
     } @else if (err) {
       <div
-        class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+        class="rounded-2xl border border-red-200/80 bg-red-50/90 px-4 py-3 text-sm text-red-800 shadow-soft"
         role="alert"
       >
         {{ err }}
       </div>
     } @else if (releases.length === 0) {
       <div
-        class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-6 py-16 text-center"
+        class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300/90 bg-white/60 px-6 py-16 text-center shadow-soft"
       >
         <svg
           class="mb-4 h-12 w-12 text-slate-400"
@@ -83,19 +83,14 @@ import { ReleaseService } from '../../shared/services/release.service';
           Aún no se registró ninguna solicitud. Crea la primera desde el botón
           de abajo.
         </p>
-        <a
-          routerLink="/releases/new"
-          class="mt-6 inline-flex rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
-        >
-          Nueva Solicitud
+        <a routerLink="/releases/new" class="btn-primary mt-6">
+          Nueva solicitud
         </a>
       </div>
     } @else {
-      <div
-        class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm"
-      >
-        <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-          <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
+      <div class="table-shell overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-100 text-left text-sm">
+          <thead class="table-header divide-y divide-slate-100">
             <tr>
               <th scope="col" class="whitespace-nowrap px-4 py-3">Fecha</th>
               <th scope="col" class="whitespace-nowrap px-4 py-3">Equipo</th>
@@ -109,7 +104,7 @@ import { ReleaseService } from '../../shared/services/release.service';
           </thead>
           <tbody class="divide-y divide-slate-100">
             @for (r of releases; track r.id) {
-              <tr class="hover:bg-slate-50/80">
+              <tr class="transition hover:bg-brand-50/40">
                 <td class="whitespace-nowrap px-4 py-3 text-slate-800">
                   {{ formatFecha(r.fecha) }}
                 </td>
@@ -276,40 +271,45 @@ export class ReleaseListComponent implements OnInit {
     return Math.min(100, Math.max(0, n ?? 0));
   }
 
-  /** SKILL — badges Tailwind */
+  /** Badges estilo pill */
   estadoBadgeClass(estado: string): string {
-    const base = 'inline-flex rounded px-2 py-0.5 text-xs font-medium ';
+    const base =
+      'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ';
     if (estado === 'approved') {
-      return base + 'bg-green-100 text-green-800';
+      return base + 'bg-emerald-50 text-emerald-800 ring-emerald-200/80';
     }
     if (estado === 'pending') {
-      return base + 'bg-yellow-100 text-yellow-800';
+      return base + 'bg-amber-50 text-amber-900 ring-amber-200/80';
     }
     if (estado === 'rejected') {
-      return base + 'bg-red-100 text-red-800';
+      return base + 'bg-red-50 text-red-800 ring-red-200/80';
     }
-    return base + 'bg-slate-100 text-slate-800';
+    return base + 'bg-slate-100 text-slate-800 ring-slate-200/80';
   }
 
   tipoBadgeClass(tipo: string): string {
-    const base = 'inline-flex rounded px-2 py-0.5 text-xs font-medium ';
+    const base =
+      'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ';
     if (tipo === 'rs') {
-      return base + 'bg-blue-100 text-blue-800';
+      return base + 'bg-brand-50 text-brand-900 ring-brand-200/80';
     }
     if (tipo === 'fx') {
-      return base + 'bg-orange-100 text-orange-800';
+      return base + 'bg-orange-50 text-orange-900 ring-orange-200/80';
     }
     if (tipo === 'cv') {
-      return base + 'bg-purple-100 text-purple-800';
+      return base + 'bg-violet-50 text-violet-900 ring-violet-200/80';
     }
-    return base + 'bg-slate-100 text-slate-800';
+    return base + 'bg-slate-100 text-slate-800 ring-slate-200/80';
   }
 
   aprobacionBadgeClass(auto: boolean): string {
-    const base = 'inline-flex rounded px-2 py-0.5 text-xs font-medium ';
+    const base =
+      'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ';
     return (
       base +
-      (auto ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700')
+      (auto
+        ? 'bg-brand-50 text-brand-800 ring-brand-200/70'
+        : 'bg-slate-100 text-slate-700 ring-slate-200/80')
     );
   }
 }

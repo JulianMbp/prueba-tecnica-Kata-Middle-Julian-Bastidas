@@ -10,21 +10,26 @@ import { ReleaseService } from '../../shared/services/release.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="mb-6">
-      <h1 class="text-2xl font-semibold text-slate-900">
-        Reglas de aprobación
-      </h1>
-      <p class="mt-1 text-sm text-slate-600">
-        Tres reglas para releases tipo <span class="font-mono text-xs">rs</span
+    <div class="mb-8">
+      <h1 class="page-title">Reglas de aprobación</h1>
+      <p class="page-subtitle">
+        Tres reglas para releases tipo <span class="font-mono text-xs text-slate-700"
+          >rs</span
         >. La regla de cobertura permite ajustar el umbral mínimo.
       </p>
     </div>
 
     @if (loading) {
-      <p class="text-slate-600">Cargando…</p>
+      <div class="space-y-4" role="status" aria-label="Cargando reglas">
+        @for (s of skeletonRows; track s) {
+          <div
+            class="h-36 animate-pulse rounded-2xl border border-slate-200/80 bg-slate-100/80"
+          ></div>
+        }
+      </div>
     } @else if (err) {
       <div
-        class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+        class="rounded-2xl border border-red-200/80 bg-red-50/90 px-4 py-3 text-sm text-red-800 shadow-soft"
         role="alert"
       >
         {{ err }}
@@ -32,39 +37,39 @@ import { ReleaseService } from '../../shared/services/release.service';
     } @else {
       <div class="space-y-4">
         @for (rule of rules; track rule.id) {
-          <div
-            class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-          >
+          <div class="app-card p-5 sm:p-6">
             <div class="flex flex-wrap items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
-                <p class="font-mono text-sm font-semibold text-slate-900">
+                <p class="font-mono text-sm font-semibold text-brand-900">
                   {{ rule.nombre }}
                 </p>
-                <p class="mt-1 text-sm text-slate-600">{{ rule.descripcion }}</p>
+                <p class="mt-1.5 text-sm leading-relaxed text-slate-600">
+                  {{ rule.descripcion }}
+                </p>
               </div>
               <label
-                class="flex shrink-0 cursor-pointer items-center gap-2 text-sm text-slate-700"
+                class="flex shrink-0 cursor-pointer select-none items-center gap-3 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 text-sm text-slate-800 transition hover:bg-slate-100/80"
               >
                 <input
                   type="checkbox"
-                  class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  class="h-5 w-5 rounded-md border-slate-300 text-brand-600 focus:ring-brand-500 focus:ring-offset-0"
                   [ngModel]="rule.activa"
                   [ngModelOptions]="{ standalone: true }"
                   [disabled]="savingId === rule.id"
                   (ngModelChange)="toggleActiva(rule, $event)"
                 />
-                <span>Activa</span>
+                <span class="font-medium">Activa</span>
               </label>
             </div>
 
             @if (rule.nombre === 'min_coverage') {
               <div
-                class="mt-4 flex flex-wrap items-end gap-3 border-t border-slate-100 pt-4"
+                class="mt-5 flex flex-wrap items-end gap-4 border-t border-slate-100 pt-5"
               >
                 <div>
                   <label
                     [attr.for]="'mincov-' + rule.id"
-                    class="mb-1 block text-xs font-medium text-slate-600"
+                    class="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-500"
                   >
                     Umbral mínimo de cobertura (%)
                   </label>
@@ -74,7 +79,7 @@ import { ReleaseService } from '../../shared/services/release.service';
                     min="0"
                     max="100"
                     step="1"
-                    class="w-28 rounded-lg border border-slate-300 px-3 py-2 text-sm tabular-nums shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    class="app-input w-32 tabular-nums"
                     [ngModel]="minCoverageDraft[rule.id] ?? minCoverageFromRule(rule)"
                     [ngModelOptions]="{ standalone: true }"
                     [disabled]="savingId === rule.id"
@@ -83,7 +88,14 @@ import { ReleaseService } from '../../shared/services/release.service';
                   />
                 </div>
                 @if (savingId === rule.id) {
-                  <span class="text-xs text-slate-500">Guardando…</span>
+                  <span
+                    class="inline-flex items-center gap-2 text-xs font-medium text-slate-500"
+                  >
+                    <span
+                      class="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-brand-600 border-t-transparent"
+                    ></span>
+                    Guardando…
+                  </span>
                 }
               </div>
             }
@@ -96,6 +108,8 @@ import { ReleaseService } from '../../shared/services/release.service';
 export class AdminRulesComponent implements OnInit {
   private readonly api = inject(ReleaseService);
   private readonly toastr = inject(ToastrService);
+
+  readonly skeletonRows = [1, 2, 3];
 
   rules: ApprovalRule[] = [];
   loading = true;

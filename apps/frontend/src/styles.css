@@ -2,6 +2,143 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-gradient-to-b from-slate-50 via-slate-50 to-slate-100/90 text-slate-900 antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-200/80 text-brand-900;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500/40 ring-offset-2 ring-offset-slate-50;
+  }
+}
+
+@layer components {
+  .app-card {
+    @apply rounded-2xl border border-slate-200/80 bg-white/95 shadow-card backdrop-blur-sm;
+  }
+
+  .app-label {
+    @apply text-sm font-medium text-slate-700;
+  }
+
+  .app-input {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm transition placeholder:text-slate-400 hover:border-slate-300 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-brand-500/30 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-lg px-2 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900;
+  }
+
+  .nav-link {
+    @apply rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900;
+  }
+
+  .nav-link-active {
+    @apply bg-brand-50 text-brand-800 ring-1 ring-brand-200/80;
+  }
+
+  .table-shell {
+    @apply overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-soft;
+  }
+
+  .table-header {
+    @apply bg-slate-50/90 text-xs font-semibold uppercase tracking-wider text-slate-500;
+  }
+
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight text-slate-900;
+  }
+
+  .page-subtitle {
+    @apply mt-1 text-sm text-slate-600;
+  }
+}
+
+/* ngx-toastr — alineado con el tema */
+#toast-container.toast-top-right {
+  @apply top-4 right-4;
+}
+
+#toast-container .toast {
+  @apply mb-3 min-w-[280px] max-w-md rounded-xl border border-slate-200/80 bg-white px-4 py-3 font-sans text-sm text-slate-800 shadow-card opacity-100;
+  background-image: none !important;
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 0.06),
+    0 12px 40px -16px rgb(15 23 42 / 0.14) !important;
+}
+
+#toast-container .toast .toast-title {
+  @apply mb-0.5 text-sm font-semibold text-slate-900;
+}
+
+#toast-container .toast .toast-message {
+  @apply text-sm text-slate-600;
+}
+
+#toast-container .toast-success {
+  @apply border-emerald-200/80 bg-emerald-50/95;
+}
+
+#toast-container .toast-success .toast-title {
+  @apply text-emerald-900;
+}
+
+#toast-container .toast-success .toast-message {
+  @apply text-emerald-800/90;
+}
+
+#toast-container .toast-error {
+  @apply border-red-200/80 bg-red-50/95;
+}
+
+#toast-container .toast-error .toast-title {
+  @apply text-red-900;
+}
+
+#toast-container .toast-error .toast-message {
+  @apply text-red-800/90;
+}
+
+#toast-container .toast-warning {
+  @apply border-amber-200/80 bg-amber-50/95;
+}
+
+#toast-container .toast-warning .toast-title {
+  @apply text-amber-900;
+}
+
+#toast-container .toast-warning .toast-message {
+  @apply text-amber-800/90;
+}
+
+#toast-container .toast-info {
+  @apply border-brand-200/80 bg-brand-50/95;
+}
+
+#toast-container .toast-info .toast-title {
+  @apply text-brand-900;
+}
+
+#toast-container .toast-info .toast-message {
+  @apply text-brand-800/90;
+}
+
+#toast-container .toast-close-button {
+  @apply right-3 top-3 text-slate-400 hover:text-slate-700;
 }

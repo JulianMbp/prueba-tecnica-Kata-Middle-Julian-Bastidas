@@ -10,8 +10,8 @@ import { ReleaseService } from '../../shared/services/release.service';
   imports: [CommonModule, RouterLink],
   template: `
     <div class="mb-8">
-      <h1 class="text-2xl font-semibold text-slate-900">Administración</h1>
-      <p class="mt-1 text-sm text-slate-600">
+      <h1 class="page-title">Administración</h1>
+      <p class="page-subtitle">
         Resumen de releases y accesos rápidos al panel de aprobación y reglas.
       </p>
     </div>
@@ -20,13 +20,13 @@ import { ReleaseService } from '../../shared/services/release.service';
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         @for (s of skeleton; track s) {
           <div
-            class="h-28 animate-pulse rounded-xl border border-slate-200 bg-slate-100"
+            class="h-32 animate-pulse rounded-2xl border border-slate-200/80 bg-slate-100/80"
           ></div>
         }
       </div>
     } @else if (err) {
       <div
-        class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+        class="rounded-2xl border border-red-200/80 bg-red-50/90 px-4 py-3 text-sm text-red-800 shadow-soft"
         role="alert"
       >
         {{ err }}
@@ -34,71 +34,133 @@ import { ReleaseService } from '../../shared/services/release.service';
     } @else {
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div
-          class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          class="app-card relative overflow-hidden border-slate-200/80 p-5 pl-6 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-brand-500"
         >
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <svg
+            class="mb-3 h-8 w-8 text-brand-500/90"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M4 6h16M4 10h16M4 14h10"
+            />
+          </svg>
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">
             Total
           </p>
-          <p class="mt-2 text-3xl font-bold tabular-nums text-slate-900">
+          <p class="mt-1 text-3xl font-bold tabular-nums tracking-tight text-slate-900">
             {{ stats.total }}
           </p>
         </div>
         <div
-          class="rounded-xl border border-amber-200 bg-amber-50/80 p-5 shadow-sm"
+          class="app-card relative overflow-hidden border-amber-200/60 bg-amber-50/50 p-5 pl-6 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-amber-500"
         >
+          <svg
+            class="mb-3 h-8 w-8 text-amber-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
           <p
-            class="text-xs font-semibold uppercase tracking-wide text-amber-800/90"
+            class="text-xs font-semibold uppercase tracking-wider text-amber-800/90"
           >
             Pendientes
           </p>
-          <p class="mt-2 text-3xl font-bold tabular-nums text-amber-900">
+          <p class="mt-1 text-3xl font-bold tabular-nums tracking-tight text-amber-950">
             {{ stats.pending }}
           </p>
         </div>
         <div
-          class="rounded-xl border border-blue-200 bg-blue-50/80 p-5 shadow-sm"
+          class="app-card relative overflow-hidden border-brand-200/60 bg-brand-50/40 p-5 pl-6 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-brand-600"
         >
-          <p class="text-xs font-semibold uppercase tracking-wide text-blue-800/90">
+          <svg
+            class="mb-3 h-8 w-8 text-brand-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p
+            class="text-xs font-semibold uppercase tracking-wider text-brand-800/90"
+          >
             Aprobados automáticos
           </p>
-          <p class="mt-2 text-3xl font-bold tabular-nums text-blue-900">
+          <p class="mt-1 text-3xl font-bold tabular-nums tracking-tight text-brand-950">
             {{ stats.autoApproved }}
           </p>
         </div>
         <div
-          class="rounded-xl border border-slate-200 bg-slate-50/90 p-5 shadow-sm"
+          class="app-card relative overflow-hidden border-slate-200/80 bg-slate-50/50 p-5 pl-6 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-slate-400"
         >
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">
+          <svg
+            class="mb-3 h-8 w-8 text-slate-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-600">
             Aprobados manuales
           </p>
-          <p class="mt-2 text-3xl font-bold tabular-nums text-slate-900">
+          <p class="mt-1 text-3xl font-bold tabular-nums tracking-tight text-slate-900">
             {{ stats.manualApproved }}
           </p>
         </div>
       </div>
 
-      <h2 class="mb-3 mt-10 text-sm font-semibold text-slate-700">
+      <h2 class="mb-4 mt-12 text-sm font-semibold uppercase tracking-wider text-slate-500">
         Acciones rápidas
       </h2>
       <ul class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        <li class="min-w-[200px] flex-1">
+        <li class="min-w-[220px] flex-1">
           <a
             routerLink="/admin/releases"
-            class="flex flex-col rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm transition hover:border-blue-300 hover:bg-slate-50"
+            class="app-card group flex flex-col gap-1 p-5 transition hover:border-brand-300/80 hover:shadow-card"
           >
-            <span class="font-medium text-slate-900">Aprobar pendientes</span>
-            <span class="mt-1 text-xs text-slate-500"
+            <span class="font-semibold text-slate-900 group-hover:text-brand-800"
+              >Aprobar pendientes</span
+            >
+            <span class="text-xs text-slate-500"
               >Lista filtrada con aprobación manual</span
             >
           </a>
         </li>
-        <li class="min-w-[200px] flex-1">
+        <li class="min-w-[220px] flex-1">
           <a
             routerLink="/admin/rules"
-            class="flex flex-col rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm transition hover:border-blue-300 hover:bg-slate-50"
+            class="app-card group flex flex-col gap-1 p-5 transition hover:border-brand-300/80 hover:shadow-card"
           >
-            <span class="font-medium text-slate-900">Reglas de aprobación</span>
-            <span class="mt-1 text-xs text-slate-500"
+            <span class="font-semibold text-slate-900 group-hover:text-brand-800"
+              >Reglas de aprobación</span
+            >
+            <span class="text-xs text-slate-500"
               >Activar reglas y umbral de cobertura</span
             >
           </a>

@@ -9,43 +9,58 @@ import { ReleaseService } from '../../shared/services/release.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="mb-6">
-      <h1 class="text-2xl font-semibold text-slate-900">
-        Releases pendientes
-      </h1>
-      <p class="mt-1 text-sm text-slate-600">
+    <div class="mb-8">
+      <h1 class="page-title">Releases pendientes</h1>
+      <p class="page-subtitle">
         Aprobación manual. Los cambios se reflejan al instante; si falla el
         servidor se revierte la fila.
       </p>
     </div>
 
     @if (loading) {
-      <p class="text-slate-600">Cargando…</p>
+      <div
+        class="table-shell overflow-hidden"
+        role="status"
+        aria-label="Cargando releases pendientes"
+      >
+        <div class="border-b border-slate-100/90 bg-slate-50/90 px-4 py-3">
+          <div class="h-4 w-48 animate-pulse rounded-lg bg-slate-200/90"></div>
+        </div>
+        <div class="divide-y divide-slate-100 p-4">
+          @for (s of skeletonRows; track s) {
+            <div class="flex flex-wrap items-center gap-4 py-4">
+              <div class="h-4 w-24 animate-pulse rounded bg-slate-200"></div>
+              <div class="h-4 w-28 animate-pulse rounded bg-slate-200"></div>
+              <div class="h-6 w-14 animate-pulse rounded-full bg-slate-200"></div>
+              <div
+                class="h-4 min-w-[120px] flex-1 animate-pulse rounded bg-slate-200"
+              ></div>
+              <div class="h-8 w-20 animate-pulse rounded-lg bg-slate-200"></div>
+            </div>
+          }
+        </div>
+      </div>
     } @else if (errLoad) {
       <div
-        class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+        class="rounded-2xl border border-red-200/80 bg-red-50/90 px-4 py-3 text-sm text-red-800 shadow-soft"
         role="alert"
       >
         {{ errLoad }}
       </div>
     } @else if (pending.length === 0) {
       <div
-        class="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-6 py-12 text-center"
+        class="rounded-2xl border border-dashed border-slate-300/90 bg-white/60 px-6 py-14 text-center shadow-soft"
       >
-        <p class="font-medium text-slate-700">No hay releases pendientes</p>
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="font-semibold text-slate-800">No hay releases pendientes</p>
+        <p class="mt-2 text-sm text-slate-500">
           Cuando una evaluación automática falle, aparecerán aquí para
           revisión.
         </p>
       </div>
     } @else {
-      <div
-        class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm"
-      >
-        <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-          <thead
-            class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600"
-          >
+      <div class="table-shell overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-100 text-left text-sm">
+          <thead class="table-header divide-y divide-slate-100">
             <tr>
               <th scope="col" class="whitespace-nowrap px-4 py-3">Fecha</th>
               <th scope="col" class="whitespace-nowrap px-4 py-3">Equipo</th>
@@ -57,7 +72,7 @@ import { ReleaseService } from '../../shared/services/release.service';
           </thead>
           <tbody class="divide-y divide-slate-100">
             @for (r of pending; track r.id) {
-              <tr class="hover:bg-slate-50/80">
+              <tr class="transition hover:bg-brand-50/40">
                 <td class="whitespace-nowrap px-4 py-3 text-slate-800">
                   {{ formatFecha(r.fecha) }}
                 </td>
@@ -67,7 +82,10 @@ import { ReleaseService } from '../../shared/services/release.service';
                 <td class="px-4 py-3">
                   <span [class]="tipoBadgeClass(r.tipo)">{{ r.tipo }}</span>
                 </td>
-                <td class="max-w-xs truncate px-4 py-3 text-slate-700" [title]="r.descripcion">
+                <td
+                  class="max-w-xs truncate px-4 py-3 text-slate-700"
+                  [title]="r.descripcion"
+                >
                   {{ r.descripcion }}
                 </td>
                 <td class="whitespace-nowrap px-4 py-3 tabular-nums text-slate-700">
@@ -76,7 +94,7 @@ import { ReleaseService } from '../../shared/services/release.service';
                 <td class="whitespace-nowrap px-4 py-3">
                   <button
                     type="button"
-                    class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800"
+                    class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-3 py-2 text-xs font-semibold text-white shadow-soft transition hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
                     (click)="approve(r)"
                   >
                     Aprobar
@@ -93,6 +111,8 @@ import { ReleaseService } from '../../shared/services/release.service';
 export class AdminReleasesComponent implements OnInit {
   private readonly api = inject(ReleaseService);
   private readonly toastr = inject(ToastrService);
+
+  readonly skeletonRows = [1, 2, 3, 4, 5];
 
   /** Solo estado <code>pending</code> */
   pending: Release[] = [];
@@ -152,16 +172,17 @@ export class AdminReleasesComponent implements OnInit {
   }
 
   tipoBadgeClass(tipo: string): string {
-    const base = 'inline-flex rounded px-2 py-0.5 text-xs font-medium ';
+    const base =
+      'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ';
     if (tipo === 'rs') {
-      return base + 'bg-blue-100 text-blue-800';
+      return base + 'bg-brand-50 text-brand-900 ring-brand-200/80';
     }
     if (tipo === 'fx') {
-      return base + 'bg-orange-100 text-orange-800';
+      return base + 'bg-orange-50 text-orange-900 ring-orange-200/80';
     }
     if (tipo === 'cv') {
-      return base + 'bg-purple-100 text-purple-800';
+      return base + 'bg-violet-50 text-violet-900 ring-violet-200/80';
     }
-    return base + 'bg-slate-100 text-slate-800';
+    return base + 'bg-slate-100 text-slate-800 ring-slate-200/80';
   }
 }

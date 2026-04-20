@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -15,36 +15,55 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [ReactiveFormsModule],
   template: `
     <div
-      class="flex min-h-[calc(100vh-6rem)] w-full items-center justify-center px-4"
+      class="flex min-h-[calc(100vh-5.5rem)] w-full items-center justify-center px-4 py-8"
     >
-      <div
-        class="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-lg"
-      >
-        <h1 class="mb-6 text-center text-xl font-semibold text-slate-900">
-          Iniciar sesión
-        </h1>
+      <div class="app-card w-full max-w-md p-8 sm:p-10">
+        <div class="mb-8 text-center">
+          <div
+            class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-lg font-bold text-white shadow-soft"
+            aria-hidden="true"
+          >
+            RA
+          </div>
+          <h1 class="page-title text-xl sm:text-2xl">Iniciar sesión</h1>
+          <p class="page-subtitle mt-2">
+            Accede para gestionar solicitudes de release.
+          </p>
+        </div>
 
         @if (error()) {
-          <p
-            class="mb-4 rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-700"
+          <div
+            class="mb-6 flex items-start gap-3 rounded-xl border border-red-200/80 bg-red-50/90 px-4 py-3 text-sm text-red-800"
             role="alert"
           >
-            {{ error() }}
-          </p>
+            <svg
+              class="mt-0.5 h-5 w-5 shrink-0 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{{ error() }}</span>
+          </div>
         }
 
-        <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-          <div class="flex flex-col gap-1">
-            <label for="login-email" class="text-sm font-medium text-slate-700"
-              >Email</label
-            >
+        <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+          <div class="flex flex-col gap-1.5">
+            <label for="login-email" class="app-label">Email</label>
             <input
               id="login-email"
               type="email"
               formControlName="email"
               autocomplete="email"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none ring-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              [class.border-red-400]="
+              class="app-input"
+              [class.border-red-300]="
                 form.controls.email.invalid && form.controls.email.touched
               "
             />
@@ -58,19 +77,15 @@ import { AuthService } from '../../core/services/auth.service';
             }
           </div>
 
-          <div class="flex flex-col gap-1">
-            <label
-              for="login-password"
-              class="text-sm font-medium text-slate-700"
-              >Contraseña</label
-            >
+          <div class="flex flex-col gap-1.5">
+            <label for="login-password" class="app-label">Contraseña</label>
             <input
               id="login-password"
               type="password"
               formControlName="password"
               autocomplete="current-password"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 outline-none ring-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              [class.border-red-400]="
+              class="app-input"
+              [class.border-red-300]="
                 form.controls.password.invalid && form.controls.password.touched
               "
             />
@@ -84,7 +99,7 @@ import { AuthService } from '../../core/services/auth.service';
 
           <button
             type="submit"
-            class="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            class="btn-primary mt-1 w-full py-3"
             [disabled]="loading()"
           >
             @if (loading()) {
@@ -115,6 +130,15 @@ export class LoginComponent {
     password: ['', [Validators.required]],
   });
 
+  constructor() {
+    // Si el estado auth cambia a true, forzamos salida de /login.
+    effect(() => {
+      if (this.auth.isAuthenticated()) {
+        void this.router.navigate(['/releases'], { replaceUrl: true });
+      }
+    });
+  }
+
   submit(): void {
     this.error.set('');
     if (this.form.invalid) {
@@ -129,7 +153,7 @@ export class LoginComponent {
       .login(email, password)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: () => void this.router.navigateByUrl('/releases'),
+        next: () => void this.router.navigate(['/releases'], { replaceUrl: true }),
         error: (err: HttpErrorResponse) => {
           if (err.status === 401) {
             this.error.set('Credenciales inválidas');

@@ -49,22 +49,27 @@ function parseGithubPrInput(raw: string): {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <h1 class="mb-6 text-2xl font-semibold text-slate-900">Nuevo release</h1>
+    <div class="mb-8">
+      <h1 class="page-title">Nuevo release</h1>
+      <p class="page-subtitle">
+        Valida el PR en GitHub y completa los datos de la solicitud.
+      </p>
+    </div>
 
     <form
       [formGroup]="form"
       (ngSubmit)="submit()"
-      class="max-w-2xl space-y-5 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+      class="app-card max-w-2xl space-y-6 p-6 sm:p-8"
     >
-      <div class="flex flex-col gap-1">
-        <label for="rf-pr" class="text-sm font-medium text-slate-700">
+      <div class="flex flex-col gap-1.5">
+        <label for="rf-pr" class="app-label">
           Enlace del PR en GitHub <span class="text-red-600">*</span>
         </label>
         <input
           id="rf-pr"
           type="url"
           formControlName="prIdentifier"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2.5 font-mono text-sm"
+          class="app-input font-mono text-sm"
           placeholder="https://github.com/owner/repo/pull/1"
           (blur)="onPrLinkBlur()"
         />
@@ -80,22 +85,20 @@ function parseGithubPrInput(raw: string): {
 
       @if (coverageLoading()) {
         <div
-          class="flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-2 text-sm text-blue-900"
+          class="flex items-center gap-3 rounded-xl border border-brand-200/80 bg-brand-50/90 px-4 py-3 text-sm text-brand-900 shadow-soft"
           role="status"
         >
           <span
-            class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"
+            class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-brand-600 border-t-transparent"
           ></span>
           Consultando GitHub…
         </div>
       }
 
-      <div class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-slate-700"
-          >Fecha de la solicitud</span
-        >
+      <div class="flex flex-col gap-1.5">
+        <span class="app-label">Fecha de la solicitud</span>
         <div
-          class="w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800"
+          class="w-full rounded-xl border border-slate-200/90 bg-slate-50/90 px-3 py-2.5 text-slate-800"
         >
           @if (fechaSolicitud(); as f) {
             {{ f | date: 'longDate' }}
@@ -105,31 +108,27 @@ function parseGithubPrInput(raw: string): {
         </div>
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="rf-equipo" class="text-sm font-medium text-slate-700"
-          >Equipo</label
-        >
+      <div class="flex flex-col gap-1.5">
+        <label for="rf-equipo" class="app-label">Equipo</label>
         <input
           id="rf-equipo"
           type="text"
           formControlName="equipo"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2.5"
-          [class.border-red-400]="showErr('equipo')"
+          class="app-input"
+          [class.border-red-300]="showErr('equipo')"
         />
         @if (showErr('equipo')) {
           <span class="text-xs text-red-600">El equipo es obligatorio</span>
         }
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="rf-tipo" class="text-sm font-medium text-slate-700"
-          >Tipo</label
-        >
+      <div class="flex flex-col gap-1.5">
+        <label for="rf-tipo" class="app-label">Tipo</label>
         <select
           id="rf-tipo"
           formControlName="tipo"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2.5"
-          [class.border-red-400]="showErr('tipo')"
+          class="app-input"
+          [class.border-red-300]="showErr('tipo')"
         >
           <option value="rs">rs (Release)</option>
           <option value="fx">fx (Hot Fix)</option>
@@ -140,32 +139,30 @@ function parseGithubPrInput(raw: string): {
         }
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="rf-desc" class="text-sm font-medium text-slate-700"
+      <div class="flex flex-col gap-1.5">
+        <label for="rf-desc" class="app-label"
           >Descripción <span class="text-red-600">*</span></label
         >
         <textarea
           id="rf-desc"
           formControlName="descripcion"
           rows="4"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2.5"
-          [class.border-red-400]="showErr('descripcion')"
+          class="app-input min-h-[7rem] resize-y"
+          [class.border-red-300]="showErr('descripcion')"
         ></textarea>
         @if (showErr('descripcion')) {
           <span class="text-xs text-red-600">La descripción es obligatoria</span>
         }
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="rf-cob" class="text-sm font-medium text-slate-700"
-          >Cobertura %</label
-        >
+      <div class="flex flex-col gap-1.5">
+        <label for="rf-cob" class="app-label">Cobertura %</label>
         <div class="flex items-center gap-2">
           @if (coberturaSoloLectura()) {
             <div
               id="rf-cob"
-              class="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-100 px-3 py-2.5 text-slate-800 tabular-nums"
-              [class.border-red-400]="showErr('cobertura')"
+              class="min-w-0 flex-1 rounded-xl border border-slate-200/90 bg-slate-50/90 px-3 py-2.5 text-slate-800 tabular-nums"
+              [class.border-red-300]="showErr('cobertura')"
               [class.animate-pulse]="coverageLoading()"
             >
               @if (coverageLoading()) {
@@ -182,8 +179,8 @@ function parseGithubPrInput(raw: string): {
               min="0"
               max="100"
               step="0.1"
-              class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2.5"
-              [class.border-red-400]="showErr('cobertura')"
+              class="app-input min-w-0 flex-1"
+              [class.border-red-300]="showErr('cobertura')"
               [attr.placeholder]="
                 !prDataReady() ? 'Valida el PR primero' : '0–100'
               "
@@ -192,7 +189,7 @@ function parseGithubPrInput(raw: string): {
         </div>
         @if (coverageHint() === 'auto' && autoCoveragePct() != null) {
           <span
-            class="inline-flex w-fit rounded bg-green-50 px-2 py-1 text-xs text-green-700"
+            class="inline-flex w-fit rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800 ring-1 ring-emerald-200/80"
           >
             ✓ Cobertura desde GitHub CI ({{
               autoCoveragePct() | number: '1.0-1'
@@ -201,7 +198,7 @@ function parseGithubPrInput(raw: string): {
         }
         @if (coverageHint() === 'warn' && prDataReady()) {
           <span
-            class="inline-flex w-fit rounded bg-yellow-50 px-2 py-1 text-xs text-yellow-700"
+            class="inline-flex w-fit rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-900 ring-1 ring-amber-200/80"
           >
             ⚠ No se detectó cobertura en el CI. Indica el % manualmente.
           </span>
@@ -213,17 +210,15 @@ function parseGithubPrInput(raw: string): {
         }
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="rf-mail" class="text-sm font-medium text-slate-700"
-          >Email aprobador</label
-        >
+      <div class="flex flex-col gap-1.5">
+        <label for="rf-mail" class="app-label">Email aprobador</label>
         <input
           id="rf-mail"
           type="email"
           formControlName="approverEmail"
           autocomplete="email"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2.5"
-          [class.border-red-400]="showErr('approverEmail')"
+          class="app-input"
+          [class.border-red-300]="showErr('approverEmail')"
         />
         @if (showErr('approverEmail')) {
           <span class="text-xs text-red-600">{{
@@ -232,12 +227,15 @@ function parseGithubPrInput(raw: string): {
         }
       </div>
 
-      <div class="rounded-lg border border-slate-200 bg-slate-50/80 p-4">
-        <div class="mb-3 flex items-center justify-between">
-          <span class="text-sm font-medium text-slate-800">Stack (frameworks)</span>
+      <div class="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 sm:p-5">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span class="text-sm font-semibold text-slate-900">Stack (frameworks)</span>
+            <p class="mt-0.5 text-xs text-slate-500">Framework y versión por fila.</p>
+          </div>
           <button
             type="button"
-            class="rounded-lg bg-slate-200 px-3 py-1.5 text-xs font-medium text-slate-800 hover:bg-slate-300"
+            class="btn-secondary py-2 text-xs"
             (click)="addStackRow()"
           >
             + Añadir fila
@@ -246,28 +244,28 @@ function parseGithubPrInput(raw: string): {
         <div formArrayName="stack" class="space-y-3">
           <div
             *ngFor="let _row of stack.controls; let i = index"
-            class="flex flex-wrap items-end gap-3 rounded-lg border border-slate-200 bg-white p-3"
+            class="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200/80 bg-white p-3 shadow-soft"
             [formGroupName]="i"
           >
             <div class="min-w-[140px] flex-1 flex-col gap-1">
-              <label class="text-xs text-slate-600">Framework</label>
+              <label class="text-xs font-medium text-slate-600">Framework</label>
               <input
                 type="text"
                 formControlName="framework"
-                class="w-full rounded border border-slate-300 px-2 py-2 text-sm"
-                [class.border-red-400]="stackFieldErr(i, 'framework')"
+                class="app-input py-2 text-sm"
+                [class.border-red-300]="stackFieldErr(i, 'framework')"
               />
               @if (stackFieldErr(i, 'framework')) {
                 <span class="text-xs text-red-600">Requerido</span>
               }
             </div>
             <div class="min-w-[120px] flex-1 flex-col gap-1">
-              <label class="text-xs text-slate-600">Versión</label>
+              <label class="text-xs font-medium text-slate-600">Versión</label>
               <input
                 type="text"
                 formControlName="version"
-                class="w-full rounded border border-slate-300 px-2 py-2 text-sm"
-                [class.border-red-400]="stackFieldErr(i, 'version')"
+                class="app-input py-2 text-sm"
+                [class.border-red-300]="stackFieldErr(i, 'version')"
               />
               @if (stackFieldErr(i, 'version')) {
                 <span class="text-xs text-red-600">Requerido</span>
@@ -276,7 +274,7 @@ function parseGithubPrInput(raw: string): {
             @if (stack.length > 1) {
               <button
                 type="button"
-                class="rounded border border-red-200 px-2 py-2 text-xs text-red-700 hover:bg-red-50"
+                class="rounded-lg border border-red-200/90 bg-white px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-50"
                 (click)="removeStackRow(i)"
               >
                 Quitar
@@ -293,7 +291,7 @@ function parseGithubPrInput(raw: string): {
 
       <button
         type="submit"
-        class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+        class="btn-primary w-full py-3"
         [disabled]="loading() || !canSubmit()"
       >
         @if (loading()) {
