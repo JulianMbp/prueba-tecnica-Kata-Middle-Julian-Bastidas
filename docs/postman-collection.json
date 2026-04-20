@@ -1,0 +1,664 @@
+{
+  "info": {
+    "name": "Release Approval — PoC",
+    "description": "Colección alineada con docs/SMOKE-TESTS.md. Swagger gateway: http://localhost:3000/docs\n\nTras Login, copia access_token en la variable de colección \"token\".",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "gatewayUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "releaseServiceUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "rulesServiceUrl",
+      "value": "http://localhost:3002"
+    },
+    {
+      "key": "integrationServiceUrl",
+      "value": "http://localhost:3003"
+    },
+    {
+      "key": "notificationServiceUrl",
+      "value": "http://localhost:3004"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "releaseId",
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "key": "ruleId",
+      "value": "1"
+    },
+    {
+      "key": "owner",
+      "value": "JulianMbp"
+    },
+    {
+      "key": "repo",
+      "value": "rpeo-prueba-ci"
+    },
+    {
+      "key": "prNumber",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "API Gateway (3000)",
+      "item": [
+        {
+          "name": "release-service (proxy)",
+          "item": [
+            {
+              "name": "Login (JWT)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{gatewayUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@empresa.com\",\n  \"password\": \"Admin123!\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Login incorrecto (401)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{gatewayUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@empresa.com\",\n  \"password\": \"incorrecta\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Crear release",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{gatewayUrl}}/api/releases",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-04-19\",\n  \"equipo\": \"Equipo PoC\",\n  \"tipo\": \"rs\",\n  \"descripcion\": \"Ejemplo vía gateway\",\n  \"prIdentifier\": \"JIRA-1\",\n  \"cobertura\": 85,\n  \"stack\": [\n    {\n      \"framework\": \"angular\",\n      \"version\": \"17.3.1\"\n    }\n  ],\n  \"approverEmail\": \"aprobador@empresa.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Listar releases",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{gatewayUrl}}/api/releases"
+              }
+            },
+            {
+              "name": "Obtener release por id",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{gatewayUrl}}/api/releases/{{releaseId}}"
+              }
+            },
+            {
+              "name": "Aprobar release (solo admin)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{gatewayUrl}}/api/releases/{{releaseId}}/approve",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Listar reglas",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{gatewayUrl}}/api/rules"
+              }
+            },
+            {
+              "name": "Actualizar regla (activa / config)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{gatewayUrl}}/api/rules/{{ruleId}}",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"activa\": true,\n  \"config\": {\n    \"minCoverage\": 80\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "integration-service (proxy)",
+          "item": [
+            {
+              "name": "Cobertura desde checks/comentarios del PR",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{gatewayUrl}}/api/coverage/{{owner}}/{{repo}}/{{prNumber}}"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "release-service directo (3001)",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{releaseServiceUrl}}/health"
+          }
+        },
+        {
+          "name": "Login directo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{releaseServiceUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@empresa.com\",\n  \"password\": \"Admin123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Crear release (directo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{releaseServiceUrl}}/releases",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-04-19\",\n  \"equipo\": \"Equipo PoC\",\n  \"tipo\": \"rs\",\n  \"descripcion\": \"Directo a release-service\",\n  \"prIdentifier\": \"JIRA-1\",\n  \"cobertura\": 85,\n  \"stack\": [\n    {\n      \"framework\": \"angular\",\n      \"version\": \"17.3.1\"\n    }\n  ],\n  \"approverEmail\": \"aprobador@empresa.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Listar releases (directo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{releaseServiceUrl}}/releases"
+          }
+        },
+        {
+          "name": "Obtener por id (directo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{releaseServiceUrl}}/releases/{{releaseId}}"
+          }
+        },
+        {
+          "name": "Aprobar manualmente (directo)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{releaseServiceUrl}}/releases/{{releaseId}}/approve"
+          }
+        },
+        {
+          "name": "Listar reglas de aprobación (directo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{releaseServiceUrl}}/rules"
+          }
+        },
+        {
+          "name": "Actualizar regla (directo)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{releaseServiceUrl}}/rules/{{ruleId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activa\": true,\n  \"config\": {\n    \"minCoverage\": 80\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "rules-service (3002)",
+      "item": [
+        {
+          "name": "Evaluar reglas (POST interno típico)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{rulesServiceUrl}}/rules/evaluate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cobertura\": 85,\n  \"descripcion\": \"Texto de descripción\",\n  \"prIdentifier\": \"JIRA-100\",\n  \"stack\": [\n    {\n      \"framework\": \"angular\",\n      \"version\": \"17.3.1\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"nombre\": \"min_coverage\",\n      \"activa\": true,\n      \"config\": {\n        \"minCoverage\": 80\n      }\n    },\n    {\n      \"nombre\": \"require_pr\",\n      \"activa\": true,\n      \"config\": {}\n    },\n    {\n      \"nombre\": \"check_obsolescence\",\n      \"activa\": true,\n      \"config\": {}\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "integration-service (3003)",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{integrationServiceUrl}}/integrations/health"
+          }
+        },
+        {
+          "name": "Validar existencia de PR",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{integrationServiceUrl}}/integrations/pr/{{owner}}/{{repo}}/{{prNumber}}"
+          }
+        },
+        {
+          "name": "Cobertura CI / comentarios del PR",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{integrationServiceUrl}}/integrations/coverage/{{owner}}/{{repo}}/{{prNumber}}"
+          }
+        },
+        {
+          "name": "Comprobar stack frente a versiones soportadas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{integrationServiceUrl}}/integrations/frameworks/check",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stack\": [\n    {\n      \"framework\": \"angular\",\n      \"version\": \"17.3.1\"\n    },\n    {\n      \"framework\": \"nestjs\",\n      \"version\": \"10.4.0\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "notification-service (3004)",
+      "item": [
+        {
+          "name": "Enviar correo de notificación (payload típico pending)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{notificationServiceUrl}}/notifications/email",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"approverEmail\": \"aprobador@empresa.com\",\n  \"equipo\": \"Equipo PoC\",\n  \"tipo\": \"rs\",\n  \"descripcion\": \"Ejemplo de release pendiente\",\n  \"prIdentifier\": \"JIRA-1\",\n  \"motivoRechazo\": \"Cobertura insuficiente: 70% (mínimo 80%)\",\n  \"releaseId\": \"{{releaseId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Flujos de humo (gateway)",
+      "item": [
+        {
+          "name": "Humo 1 — Login OK",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gatewayUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@empresa.com\",\n  \"password\": \"Admin123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Humo 1b — GET releases sin token → 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{gatewayUrl}}/api/releases"
+          }
+        },
+        {
+          "name": "Humo 2 — rs aprobado automático",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{gatewayUrl}}/api/releases",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-04-19\",\n  \"equipo\": \"Equipo PoC\",\n  \"tipo\": \"rs\",\n  \"descripcion\": \"Release validado por reglas\",\n  \"prIdentifier\": \"JulianMbp/rpeo-prueba-ci/1\",\n  \"cobertura\": 90.9,\n  \"stack\": [\n    {\n      \"framework\": \"angular\",\n      \"version\": \"17.3.1\"\n    }\n  ],\n  \"approverEmail\": \"aprobador@empresa.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Humo 3 — rs pending por cobertura",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{gatewayUrl}}/api/releases",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-04-19\",\n  \"equipo\": \"Equipo PoC\",\n  \"tipo\": \"rs\",\n  \"descripcion\": \"Cobertura bajo umbral\",\n  \"prIdentifier\": \"JIRA-100\",\n  \"cobertura\": 70,\n  \"stack\": [\n    {\n      \"framework\": \"angular\",\n      \"version\": \"17.3.1\"\n    }\n  ],\n  \"approverEmail\": \"aprobador@empresa.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Humo 4 — rs pending PR inexistente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{gatewayUrl}}/api/releases",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-04-19\",\n  \"equipo\": \"Equipo PoC\",\n  \"tipo\": \"rs\",\n  \"descripcion\": \"PR inexistente\",\n  \"prIdentifier\": \"JulianMbp/rpeo-prueba-ci/999999\",\n  \"cobertura\": 90,\n  \"stack\": [\n    {\n      \"framework\": \"angular\",\n      \"version\": \"17.3.1\"\n    }\n  ],\n  \"approverEmail\": \"aprobador@empresa.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Humo 5 — rs pending framework obsoleto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{gatewayUrl}}/api/releases",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-04-19\",\n  \"equipo\": \"Equipo PoC\",\n  \"tipo\": \"rs\",\n  \"descripcion\": \"Stack obsoleto\",\n  \"prIdentifier\": \"JIRA-200\",\n  \"cobertura\": 90,\n  \"stack\": [\n    {\n      \"framework\": \"angular\",\n      \"version\": \"13.0.0\"\n    }\n  ],\n  \"approverEmail\": \"aprobador@empresa.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Humo 6 — fx sin evaluación de reglas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{gatewayUrl}}/api/releases",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-04-19\",\n  \"equipo\": \"Equipo PoC\",\n  \"tipo\": \"fx\",\n  \"descripcion\": \"Hotfix sin evaluación de reglas\",\n  \"cobertura\": 10,\n  \"stack\": [\n    {\n      \"framework\": \"angular\",\n      \"version\": \"17.3.1\"\n    }\n  ],\n  \"approverEmail\": \"admin@empresa.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Humo 7 — Aprobar manual (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{gatewayUrl}}/api/releases/{{releaseId}}/approve",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Humo 8 — Listar todos los releases",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{gatewayUrl}}/api/releases"
+          }
+        }
+      ]
+    }
+  ]
+}
