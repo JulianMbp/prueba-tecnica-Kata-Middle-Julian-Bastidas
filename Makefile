@@ -1,4 +1,4 @@
-.PHONY: up down logs test
+.PHONY: up down logs test install
 
 up:
 	docker-compose up --build
@@ -9,10 +9,8 @@ down:
 logs:
 	docker-compose logs -f
 
+install:
+	bash scripts/install-all.sh
+
 test:
-	cd apps/api-gateway && npm test --if-present
-	cd apps/release-service && npm test --if-present
-	cd apps/rules-service && npm test --if-present
-	cd apps/integration-service && npm test --if-present
-	cd apps/notification-service && npm test --if-present
-	cd apps/frontend && npm test --if-present
+	bash scripts/run-all-tests.sh
