@@ -26,6 +26,15 @@ export class IntegrationController {
     return this.githubService.validatePR(owner, repo, prNumber);
   }
 
+  @Get('coverage/:owner/:repo/:prNumber')
+  getCoverage(
+    @Param('owner') owner: string,
+    @Param('repo') repo: string,
+    @Param('prNumber', ParseIntPipe) prNumber: number,
+  ) {
+    return this.githubService.getCoverage(owner, repo, prNumber);
+  }
+
   @Post('frameworks/check')
   checkFrameworks(@Body() body: CheckFrameworksDto) {
     return this.frameworkExplorerService.checkFrameworks(body.stack);
