@@ -29,13 +29,13 @@ import { LoginDto } from '../dto/login.dto';
 import { UpdateRuleDto } from '../dto/update-rule.dto';
 import { GatewayService } from './gateway.service';
 
-@ApiTags('API Gateway')
 @Controller('api')
 export class GatewayController {
   constructor(private readonly gateway: GatewayService) {}
 
   @Public()
   @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @ApiTags('release-service')
   @Post('auth/login')
   @ApiOperation({
     summary: 'Login',
@@ -58,6 +58,7 @@ export class GatewayController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiTags('release-service')
   @Post('releases')
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
@@ -81,6 +82,7 @@ export class GatewayController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiTags('release-service')
   @Get('releases')
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
@@ -100,6 +102,7 @@ export class GatewayController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiTags('release-service')
   @Get('releases/:id')
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Obtener release por id' })
@@ -118,6 +121,7 @@ export class GatewayController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiTags('integration-service')
   @Get('coverage/:owner/:repo/:prNumber')
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
@@ -146,6 +150,7 @@ export class GatewayController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiTags('release-service')
   @Patch('releases/:id/approve')
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
@@ -168,6 +173,7 @@ export class GatewayController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiTags('release-service')
   @Get('rules')
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
@@ -188,6 +194,7 @@ export class GatewayController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @ApiTags('release-service')
   @Patch('rules/:id')
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({
